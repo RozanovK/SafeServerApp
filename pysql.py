@@ -1,7 +1,7 @@
 import datetime
 import hashlib
 import socket
-
+import sys
 import pymysql
 
 
@@ -23,12 +23,18 @@ def getIP():
 def checkAuth(login, passwd):
     f = '%Y-%m-%d %H:%M:%S'
     time = datetime.datetime.now().strftime(f)
-    #ip = os.environ["REMOTE_ADDR"] only for CGI
-    ip = getIP()
     db = pymysql.connect("localhost", "rozanovk", "siema", "login")
     cursor = db.cursor()
+    cursor.execute(
+        '''SELECT COUNT(*) FROM logs WHERE validation="N" AND login = %s AND (TIMESTAMPDIFF(SECOND, time, %s) > 1)''', (login, time)) #sprawdzamy ilość niepoprawnych walidacji w ciągu ostatniej godziny
+    num = int(str(cursor.fetchone()[0]))
+    if num > 5:
+        print("Too many log in attempts from your's IP. You've banned for an hour")
+        sys.exit()
+    # ip = os.environ["REMOTE_ADDR"] only for CGI
+    ip = getIP()
     pwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
-    cursor.execute('SELECT password FROM users WHERE login = "%s" AND password = "%s"' % (login, pwd))
+    cursor.execute('SELECT password FROM users WHERE login = "%s"' % login)
     results = str(cursor.fetchone()[0])
     if results == pwd:
         cursor.execute('''INSERT INTO logs (ip, login, time, validation) VALUES (%s, %s, %s, %s)''' , (ip, login, time, "Y"))
@@ -40,6 +46,8 @@ def checkAuth(login, passwd):
         return False
 
     db.close()
+
+
 
 
 
