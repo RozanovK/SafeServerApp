@@ -51,9 +51,11 @@ def checkAuth(login, passwd):
 def printIP(login):
     db = pymysql.connect("localhost", "rozanovk", "siema", "login")
     cursor = db.cursor()
-    cursor.execute('''SELECT ip, time from logs WHERE login = %s''', login)
+    cursor.execute('''SELECT ip, time from logs WHERE login = %s AND validation = "N"''', login)
     logowania = cursor.fetchall()
-    print (logowania)
+    for i in logowania:
+        IP, datetime = logowania[0]
+        print('There was unsuccessful login attempt from IP %s at %s' % (IP, datetime))
 
 
 
