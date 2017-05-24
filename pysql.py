@@ -48,6 +48,14 @@ def checkAuth(login, passwd):
     db.close()
 
 
+def printIP(login):
+    db = pymysql.connect("localhost", "rozanovk", "siema", "login")
+    cursor = db.cursor()
+    cursor.execute('''SELECT ip, time from logs WHERE login = %s''', login)
+    logowania = cursor.fetchall()
+    print (logowania)
+
+
 
 
 
