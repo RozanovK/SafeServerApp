@@ -26,7 +26,7 @@ def checkAuth(login, passwd):
     db = pymysql.connect("localhost", "rozanovk", "siema", "login")
     cursor = db.cursor()
     cursor.execute(
-        '''SELECT COUNT(*) FROM logs WHERE validation="N" AND login = %s AND (TIMESTAMPDIFF(SECOND, time, %s) > 1)''', (login, time)) #sprawdzamy ilość niepoprawnych walidacji w ciągu ostatniej godziny
+        '''SELECT COUNT(*) FROM logs WHERE validation="N" AND login = %s AND (TIMESTAMPDIFF(HOUR, time, Now()) < 1)''', login) #sprawdzamy ilość niepoprawnych walidacji w ciągu ostatniej godziny
     num = int(str(cursor.fetchone()[0]))
     if num > 5:
         print("Too many log in attempts from your's IP. You've banned for an hour")
