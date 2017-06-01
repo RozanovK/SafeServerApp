@@ -51,7 +51,7 @@ def check_auth(login, passwd):
     pwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
 
     db, cursor = database_connect()
-    cursor.execute('SELECT password FROM users WHERE login = "%s"' % login)
+    cursor.execute('SELECT password FROM users WHERE login = "%s"' , login)
     results = str(cursor.fetchone()[0])
     if results == pwd:
         insert_log(ip, login, "Y")
