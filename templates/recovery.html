@@ -1,19 +1,8 @@
-<!DOCTYPE html>
-<html >
-<head>
-  <meta charset="UTF-8">
-  <title>Recovery Form</title>
-
-</head>
-
-<body>
-
+{% extends "_base.html" %}
+{% block content %}
 <form action="/passwordRecovery" method="post">
   <input name="name", type="text" placeholder="Enter Username"/>
   <input name="answer", type="text" placeholder="Enter Answer"/>
   <input class="button" type="submit" value="Recover your password"/>
 </form>
-
-
-</body>
-</html>
+{% endblock %}
