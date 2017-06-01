@@ -2,6 +2,13 @@
 {% block content %}
 <form action="/passwordRecovery" method="post">
   <input name="name", type="text" placeholder="Enter Username"/>
+  <select name="nazwa">
+
+	{% for question in questions %}
+      <option>{{ question[0] }}</option>
+    {% endfor %}
+
+  </select>
   <input name="answer", type="text" placeholder="Enter Answer"/>
   <input class="button" type="submit" value="Recover your password"/>
 </form>

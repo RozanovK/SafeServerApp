@@ -1,5 +1,6 @@
 from vial import render_template, Vial
-from pysql import auth, forgot_password, insert_new_password
+from pysql import auth, forgot_password, insert_new_password, questions
+
 
 
 def index(headers, body, data):
@@ -7,7 +8,8 @@ def index(headers, body, data):
 
 
 def recovery(headers, body, data):
-    return render_template('recovery.html', body=body, data=data), 200, {}
+    question_tuple = questions()
+    return render_template('recovery.html', body=body, data=data, questions = question_tuple), 200, {}
 
 
 routes = {
