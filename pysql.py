@@ -24,6 +24,7 @@ def get_client_address(environ):
     except KeyError:
             return environ['REMOTE_ADDR']
 
+
 def get_own_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
@@ -123,6 +124,12 @@ def insert_new_password(headers, body, data):
         db, cursor = database_connect()
         cursor.execute('''UPDATE users SET password= %s WHERE login= %s''' % (pw, login))
 
+
+def questions():
+    db, cursor = database_connect()
+    cursor.execute('''SELECT * FROM questions''')
+    questions = cursor.fetchall()
+    return questions
 
 
 

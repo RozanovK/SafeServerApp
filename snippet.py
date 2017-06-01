@@ -37,7 +37,7 @@ def put_snippet(login):
     filename = '{0}_mainpage.html'.format(login)
     with open('filename', 'w') as f:
         snippet_text = 0
-        #for i in snippets:
+        for i in snippets:
             date_time, snippet_filename = snippets[0]
             with open(snippet_filename, 'r') as snippet_file:
                 for line in snippet_file:
