@@ -8,13 +8,16 @@ import pymysql
 from vial import render_template
 
 
+
 def get_client_address(environ):
+
     try:
         return environ['HTTP_X_FORWARDED_FOR'].split(',')[-1].strip()
     except KeyError:
             return environ['REMOTE_ADDR']
 
 def get_own_ip():
+
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         s.connect(('10.255.255.255', 1))
@@ -93,6 +96,39 @@ def printIP(login):
     logowania = cursor.fetchall()
     IP, datetime = logowania[0]
     return IP, datetime
+
+
+
+
+def forgotPasswd(headers, body, data):      #check if login exists in database
+    login = str(data['name']) if 'name' in data else ''
+    answerEntered = str(data['answer']) if 'answer' in data else ''
+
+    db = pymysql.connect("localhost", "rozanovk", "siema", "login")
+    cursor = db.cursor()
+    cursor.execute('''SELECT * from users WHERE login = %s ''', login)
+
+    if str(cursor.fetchone()[0]) != 0:
+        cursor.execute('''SELECT answer FROM users WHERE login = %s''', login)
+        answerdb = str(cursor.fetchone()[0])
+        a = hashlib.sha256(answerEntered.encode('utf-8')).hexdigest()
+        if answerdb == a:
+            return render_template('passwordchange.html', body=body, data=data), 200, {}
+        else:
+            return render_template('wronganswer.html', body=body, data=data), 200, {}
+    else:
+        return render_template('wronganswer.html', body=body, data=data), 200, {}
+
+
+def insertNewPass(headers, body, data):
+
+    passwd = str(data['pw']) if 'pw' in data else ''
+    passwd_r = str(data['pw-x']) if 'pw-x' in data else ''
+    pw = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+    if passwd == passwd_r:
+        db = pymysql.connect("localhost", "rozanovk", "siema", "login")
+        cursor = db.cursor()
+        cursor.execute('''UPDATE users SET password= %s WHERE login= %s''' % (pw, login))
 
 
 

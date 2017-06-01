@@ -137,6 +137,10 @@ class Vial(object):
 
         return data
 
+    def getIP(self, environ):
+        ip = environ["REMOTE_ADDR"]
+        return ip
+
     def wsgi_app(self):
         def app(environ, start_response):
             request_headers, request_body, uri = self.get_request(environ)
