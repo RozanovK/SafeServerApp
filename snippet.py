@@ -1,6 +1,8 @@
 from datetime import datetime
 from pysql import database_connect
-from tempfile import TemporaryFile
+
+
+TEMPLATE = 'mainpage.html'
 
 
 def get_snippet(headers, body, data, login):
@@ -24,13 +26,27 @@ def get_snippet(headers, body, data, login):
 
 
 def put_snippet(login):
+    date_time = []
+    snippet = []
     db, cursor = database_connect()
     cursor.execute('''SELECT COUNT(*) FROM snippets WHERE login = %s''', login)
     number = int(cursor.fetchone()[0])
     cursor.execute('''SELECT datetime, path FROM snippets WHERE login = %s''', login)
     snippets = cursor.fetchall()
-    print (snippets)
+    db.close()
+    filename = '{0}_mainpage.html'.format(login)
+    with open('filename', 'w') as f:
+        snippet_text = 0
+        #for i in snippets:
+            date_time, snippet_filename = snippets[0]
+            with open(snippet_filename, 'r') as snippet_file:
+                for line in snippet_file:
+                    snippet_text += line
 
+    print (snippet)
+
+
+    f.close()
 
 
 

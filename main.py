@@ -1,5 +1,5 @@
 from vial import render_template, Vial
-from pysql import auth, forgotPasswd, insertNewPass
+from pysql import auth, forgot_password, insert_new_password
 
 
 
@@ -13,8 +13,8 @@ routes = {
     '/': index,
     '/auth' : auth,
     '/recovery' : recovery,
-    '/passwordRecovery' : forgotPasswd,
-    '/insertNewPass': insertNewPass,
+    '/passwordRecovery' : forgot_password,
+    '/insert_new_password': insert_new_password,
 }
 
 app = Vial(routes, prefix='/bach/drink', static='/static').wsgi_app()
