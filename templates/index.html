@@ -1,0 +1,10 @@
+{% extends "_base.html" %}
+{% block content %}
+    <form action="/auth" method="post">
+        <h4> Login Information </h4>
+        <input class="name" name="name" type="text" placeholder="Enter Username"/>
+        <input class="pw" name="pw" type="password" placeholder="Enter Password"/>
+        <a href="/recovery">Forgot your password?</a>
+        <input class="button" type="submit" value="Log in"/>
+    </form>
+{% endblock %}

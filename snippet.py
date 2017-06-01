@@ -43,10 +43,10 @@ def put_snippet(login):
                 for line in snippet_file:
                     snippet_text += line
 
-    print (snippet)
+    # print (snippet)
 
 
-    f.close()
+    # f.close()
 
 
 

@@ -1,9 +1,9 @@
-from __future__ import print_function
-from builtins import object
 # -*- coding: utf-8 -*-
 from io import BytesIO
 from cgi import FieldStorage
-from parse import parse
+import parse
+from jinja2 import Environment
+from jinja2 import FileSystemLoader
 from jinja2 import Template
 from os.path import isfile
 from mimetypes import guess_type
@@ -49,10 +49,10 @@ def not_found(headers, body, data, uri, prefix):
          % (uri, prefix), 404, {}
 
 def render_template(template_filename, **kwargs):
-    with open(template_filename, 'r') as f:
-        template_content = to_unicode(f.read())
-        template = Template(template_content)
-    return template.render(**kwargs)
+    env = Environment()
+    env.loader = FileSystemLoader('./templates/')
+    tmpl = env.get_template(template_filename)
+    return tmpl.render(**kwargs)
 
 class FormTextField(object):
     def __init__(self, value):
@@ -114,7 +114,7 @@ class Vial(object):
             return serve_static, {'filepath': uri}
         # regular routes
         for uri_template, handler in list(self.routes.items()):
-            args = parse(uri_template, uri)
+            args = parse.parse(uri_template, uri)
             if args is not None:
                 args = args.named
             if args is not None:

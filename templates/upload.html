@@ -1,0 +1,7 @@
+{% extends "_base.html" %}
+{% block content %}
+ Pola formularza:
+ {% for name in data %} {{ name }} -- {{ data[name] }} {% endfor %}
+
+ Ciało: {{ body }}
+{% endblock %}
