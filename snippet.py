@@ -17,28 +17,26 @@ def getSnippet(headers, body, data, login):
 
 def putSnippet(login):
 
-    snippets = ()
-    datet = ()
-    def validate(date_text):
+    snippets = []
+    datet = []
+    def validate(d):
         try:
-            if date_text != datetime.strptime(date_text, "%Y-%m-%d %H:%M:%S"):
-                raise ValueError
+            datetime.strptime(d, "%Y-%m-%d %H:%M:%S\n")
             return True
         except ValueError:
             return False
 
     filename = login + '.txt'
-    path = pathlib.Path('filename')
+    path = pathlib.Path(filename)
     if path.is_file():
         with open(filename, 'r') as f:
             for line in f:
                 if validate(line):
-                    datet[0] = line
-                    snippets[line] = '\n'
-                    print(datet[0] + '\n')
+                    datet.append(line)
+                    print(datet[0])
                 else:
-                    snippets[line] = line
-                    print (snippets[line])
+                    snippets.append(line)
+        print (snippets)
 
 
 putSnippet('rozanovk')
