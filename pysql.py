@@ -1,7 +1,7 @@
 from __future__ import print_function
 import socket
 from builtins import str
-import datetime
+from datetime import datetime
 import hashlib
 import pymysql
 from vial import render_template
@@ -17,6 +17,12 @@ def database_connect():
     cursor = db.cursor()
     return db, cursor
 
+
+#convert Python datetype to MySql datetime
+def datetime_mysql():
+    f = '%Y-%m-%d %H:%M:%S'
+    time = datetime.now().strftime(f)
+    return time
 
 def get_client_address(environ):
     try:
@@ -52,7 +58,7 @@ def check_auth(login, passwd):
     pwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
 
     db, cursor = database_connect()
-    cursor.execute('SELECT password FROM users WHERE login = "%s"' , login)
+    cursor.execute('SELECT password FROM users WHERE login = %s' , login)
     results = str(cursor.fetchone()[0])
     if results == pwd:
         insert_log(ip, login, "Y")
@@ -60,8 +66,6 @@ def check_auth(login, passwd):
     else:
          insert_log(ip, login, "N")
          return False
-
-    db.close()
 
 
 def ban_ip(login):
@@ -77,8 +81,7 @@ def ban_ip(login):
 
 
 def insert_log(ip, login, validation):
-    f = '%Y-%m-%d %H:%M:%S'
-    time = datetime.datetime.now().strftime(f)
+    time = datetime_mysql()
 
     db, cursor = database_connect()
     cursor.execute('''INSERT INTO logs (ip, login, time, validation) VALUES (%s, %s, %s, %s)''', (ip, login, time, validation))
