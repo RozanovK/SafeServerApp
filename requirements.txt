@@ -1,0 +1,6 @@
+Pygments==2.1
+PyMySQL3==0.5
+interfaces==0.0.4
+parse==1.8.0
+Jinja2==2.8
+pymysql==0.7.11
