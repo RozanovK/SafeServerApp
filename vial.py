@@ -7,6 +7,9 @@ from jinja2 import FileSystemLoader
 from jinja2 import Template
 from os.path import isfile
 from mimetypes import guess_type
+import posixpath
+import os
+from http.client import HTTPException
 
 STATUS_CODE = {
     200: '200 OK',
@@ -24,18 +27,21 @@ STATUS_CODE = {
     501: '501 Not Implemented',
 }
 
+
 def to_ascii(s):
     return s.encode('utf-8')
 
+
 def to_unicode(s):
     return s
+
 
 def serve_static(headers, body, data, filepath):
     if headers['request-method'] not in ['GET', 'HEAD']:
         return 'Only GET/HEAD methods allowed for static resources', 405, {}
     filepath = '.' + filepath
     if not isfile(filepath):
-        return 'File "%s" does not exist' % filepath, 404, {}
+        raise NotFound()
     try:
         f = open(filepath, 'rb')
     except IOError as e:
@@ -46,13 +52,15 @@ def serve_static(headers, body, data, filepath):
 
 def not_found(headers, body, data, uri, prefix):
     return 'Could not find a handler for URI %s (prefix: %s)' \
-         % (uri, prefix), 404, {}
+% (uri, prefix), 404, {}
+
 
 def render_template(template_filename, **kwargs):
     env = Environment()
     env.loader = FileSystemLoader('./templates/')
     tmpl = env.get_template(template_filename)
     return tmpl.render(**kwargs)
+
 
 class FormTextField(object):
     def __init__(self, value):
@@ -61,11 +69,13 @@ class FormTextField(object):
     def __repr__(self):
         return to_unicode(self.value)
 
+
 class FormFileField(object):
     def __init__(self, filename, headers, stream):
         self.filename = filename
         self.headers = headers
         self.stream = stream
+
 
     def __getattr__(self, name):
         if name is 'value':
@@ -73,9 +83,11 @@ class FormFileField(object):
             return self.stream.read()
         raise AttributeError(name)
 
+
     def __repr__(self):
         content = self.stream.read(10) + '...'
         return to_unicode('FormFile(filename="%s", value="%s")' % (self.filename, content))
+
 
 class Vial(object):
     def __init__(self, routes, prefix=None, static=None, before=None):
@@ -107,10 +119,11 @@ class Vial(object):
         if self.before is not None:
             return self.before
         return lambda headers: None
-           
+
     def get_handler(self, uri):
         # static routes
         if uri.startswith(self.static):
+            uri = posixpath.normpath(uri)
             return serve_static, {'filepath': uri}
         # regular routes
         for uri_template, handler in list(self.routes.items()):
@@ -137,9 +150,11 @@ class Vial(object):
 
         return data
 
-    def getIP(self, environ):
-        ip = environ["REMOTE_ADDR"]
-        return ip
+    def get_client_address(environ):
+        try:
+            return environ['HTTP_X_FORWARDED_FOR'].split(',')[-1].strip()
+        except KeyError:
+            return environ['REMOTE_ADDR']
 
     def wsgi_app(self):
         def app(environ, start_response):
@@ -170,3 +185,15 @@ class Vial(object):
             return make_response(response)
         return app
 
+
+class NotFound(HTTPException):
+
+    """*404* `Not Found`
+    Raise if a resource does not exist and never existed.
+    """
+    code = 404
+    description = (
+        'The requested URL was not found on the server.  '
+        'If you entered the URL manually please check your spelling and '
+        'try again.'
+)

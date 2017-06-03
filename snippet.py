@@ -1,5 +1,5 @@
-from datetime import datetime
 from pysql import database_connect, datetime_mysql
+import pygments
 
 
 TEMPLATE = 'mainpage.html'
@@ -19,15 +19,19 @@ def get_snippet(login):
     db, cursor = database_connect()
     cursor.execute('''SELECT COUNT(*) FROM snippets WHERE login = %s''', login)
     number = int(cursor.fetchone()[0])
-    cursor.execute('''SELECT datetime, title, path FROM snippets WHERE login = %s''', login)
+    d_t = [number]
+    title = [number]
+    snippet = [number]
+    cursor.execute('''SELECT datetime, title, snippet FROM snippets WHERE login = %s''', login)
     snippets = cursor.fetchall()
+    for i in snippets:
+        d_t[0], title[0], snippet[0] = i
     db.close()
-    return snippets
+    return d_t, title, snippet
 
 
 
-
-put_snippet('rozanovk')
+get_snippet('rozanovk')
 
 
 

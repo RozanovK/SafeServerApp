@@ -4,8 +4,11 @@ You had attemps to log in from IP:
 <p id = IP> {{ IP }} at {{ time }}</p>
 
 Your snippets:
-{% for snippet in qsnippets %}
-     snippet
+{% for i in d_t %}
+{% for j in title %}
+{% for snippet in snippets %}
+     {{ i, j, snippet }}
 {% endfor %}
-
+{% endfor %}
+{% endfor %}
 {% endblock %}
