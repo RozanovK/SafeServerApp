@@ -1,8 +1,4 @@
 from pysql import database_connect, datetime_mysql
-import pygments
-
-
-TEMPLATE = 'mainpage.html'
 
 
 def put_snippet(headers, body, data, login):
@@ -29,9 +25,6 @@ def get_snippet(login):
     db.close()
     return d_t, title, snippet
 
-
-
-get_snippet('rozanovk')
 
 
 

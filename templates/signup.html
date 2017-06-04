@@ -1,0 +1,32 @@
+{% extends "_base.html" %}
+{% block content %}
+	<div class="header-w3l">
+		<h1>Sign Up Form</h1>
+	</div>
+<div class="main-agileits">
+	<h2 class="sub-head">Sign Up</h2>
+		<div class="sub-main">	
+			<form action="/signup_db" method="post">
+				<input placeholder="Login" name="Name" class="name" type="text" required="">
+					<span class="icon1"><i class="fa fa-user" aria-hidden="true"></i></span><br>
+				<input  placeholder="Password" name="Password" class="pass" type="password" required="">
+					<span class="icon5"><i class="fa fa-unlock" aria-hidden="true"></i></span><br>
+				<input  placeholder="Confirm Password" name="Password" class="pass" type="password" required="">
+					<span class="icon6"><i class="fa fa-unlock" aria-hidden="true"></i></span><br>
+                <select name="nazwa">
+
+	                {% for question in questions %}
+                        <option>{{ question[0] }}</option>
+                    {% endfor %}
+
+                </select>
+                    <span class="icon1"><i class="fa fa-user" aria-hidden="true"></i></span><br>
+                <input name="answer", type="text" placeholder="Enter Answer"  required=""/>
+                    <span class="icon1"><i class="fa fa-user" aria-hidden="true"></i></span><br>
+				<input type="submit" value="sign up">
+			</form>
+		</div>
+		<div class="clear"></div>
+</div>
+{% endblock %}
+

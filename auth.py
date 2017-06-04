@@ -1,6 +1,5 @@
 from __future__ import print_function
 import socket
-from builtins import str
 import hashlib
 from vial import render_template
 from snippet import get_snippet
@@ -92,26 +91,31 @@ def forgot_password(headers, body, data):      #check if login exists in databas
         answerdb = str(cursor.fetchone()[0])
         a = hashlib.sha256(answer_entered.encode('utf-8')).hexdigest()
         if answerdb == a:
-            return render_template('passwordchange.html', body=body, data=data), 200, {}
+            return render_template('passwordchange.html', body=body, data=data, login=login), 200, {}
         else:
             return render_template('wronganswer.html', body=body, data=data), 200, {}
     else:
         return render_template('wronganswer.html', body=body, data=data), 200, {}
 
 
-def insert_new_password(headers, body, data):
+def insert_new_password(headers, body, data, login):
     passwd = str(data['pw']) if 'pw' in data else ''
     passwd_r = str(data['pw-x']) if 'pw-x' in data else ''
     pw = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
     if passwd == passwd_r:
         db, cursor = pysql.database_connect()
         cursor.execute('''UPDATE users SET password= %s WHERE login= %s''' % (pw, login))
+        db.commit()
+        return True
+    else:
+        return False
 
 
 def questions():
     db, cursor = pysql.database_connect()
     cursor.execute('''SELECT * FROM questions''')
     questions = cursor.fetchall()
+    db.close()
     return questions
 
 
