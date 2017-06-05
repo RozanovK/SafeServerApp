@@ -1,5 +1,8 @@
 # SafeServerApp
 
+## **Description**
+This is small server application written in Python3.5. Basic functionality: authentication, ability to create new user, password recovery based on secret answer
+
 ## **Requirments**
 * Python 3.6
 * uwsgi plugin for Python
