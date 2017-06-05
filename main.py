@@ -1,6 +1,6 @@
 from auth import auth, forgot_password, insert_new_password, questions
-from vial import render_template, Vial
 from signup import signup_db
+from vial import render_template, Vial
 
 
 def index(headers, body, data):
@@ -23,7 +23,7 @@ routes = {
     '/passwordRecovery': forgot_password,
     '/insert_new_password': insert_new_password,
     '/signup': signup,
-    'signup_db' : signup_db
+    '/signup_db': signup_db
 }
 
 app = Vial(routes, prefix='', static='/static').wsgi_app()

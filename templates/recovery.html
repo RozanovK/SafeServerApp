@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 {% block content %}
 <form action="/passwordRecovery" method="post">
-  <input name="name", type="text" placeholder="Enter Username"/>
+    <input name="name" type="text" placeholder="Enter Username"/>
   <select name="nazwa">
 
 	{% for question in questions %}
@@ -9,7 +9,10 @@
     {% endfor %}
 
   </select>
-  <input name="answer", type="text" placeholder="Enter Answer"/>
+    <input name="answer" type="text" placeholder="Enter Answer"/>
   <input class="button" type="submit" value="Recover your password"/>
 </form>
+
+    headers: {{ headers }}<br> body: {{ body }}<br> data: {{ data }}<br>
+
 {% endblock %}

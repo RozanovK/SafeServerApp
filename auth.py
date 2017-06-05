@@ -1,11 +1,12 @@
 from __future__ import print_function
-import socket
-import hashlib
-from vial import render_template
-from snippet import get_snippet
-import pysql
-import random
 
+import hashlib
+import random
+import socket
+
+import pysql
+from snippet import get_snippet
+from vial import render_template
 
 
 def get_own_ip():
@@ -32,6 +33,9 @@ def auth(headers, body, data):
             return render_template('mainpage.html', headers = headers, body=body, data=data, IP= IP, time=time,d_t =d_t, title=title, snippets = snippet), 200,  {'Set-Cookie': cookie}
         else:
             return render_template('ban.html', body=body, data=data)
+    else:
+        return render_template('index.html', headers=headers, body=body, data=data,
+                               message='Login or password is incorrect'), 200, {}
 
 
 def check_auth(login, passwd):
@@ -82,9 +86,14 @@ def print_ip(login):
     return IP, datetime
 
 
+def get_login(data):
+    login = str(data['name']) if 'name' in data else ''
+
+
 def forgot_password(headers, body, data):      #check if login exists in database
     login = str(data['name']) if 'name' in data else ''
     answer_entered = str(data['answer']) if 'answer' in data else ''
+    login_newpass = login
 
     db, cursor = pysql.database_connect()
     cursor.execute('''SELECT * from users WHERE login = %s ''', login)
@@ -101,15 +110,17 @@ def forgot_password(headers, body, data):      #check if login exists in databas
         return render_template('wronganswer.html', body=body, data=data), 200, {}
 
 
-def insert_new_password(headers, body, data, login):
+def insert_new_password(headers, body, data):
+    login = str(data['name']) if 'name' in data else ''
     passwd = str(data['pw']) if 'pw' in data else ''
     passwd_r = str(data['pw-x']) if 'pw-x' in data else ''
     pw = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
     if passwd == passwd_r:
         db, cursor = pysql.database_connect()
-        cursor.execute('''UPDATE users SET password= %s WHERE login= %s''' % (pw, login))
+        cursor.execute('''UPDATE users SET password= %s WHERE login= %s''', (pw, login))
         db.commit()
-        return True
+        db.close()
+        return render_template('successfull_pw_change.html', body=body, data=data), 200, {}
     else:
         return False
 
