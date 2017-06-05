@@ -4,8 +4,7 @@ import hashlib
 from vial import render_template
 from snippet import get_snippet
 import pysql
-
-
+import random
 
 
 
@@ -28,7 +27,11 @@ def auth(headers, body, data):
         if ban_ip(login):
             IP, time = print_ip(login)
             d_t, title, snippet = get_snippet(login)
-            return render_template('mainpage.html', body=body, data=data, IP= IP, time=time,d_t =d_t, title=title, snippets = snippet), 200, {}
+            token = create_token()
+            cookie = '{0}; expires: Thu, 18 Dec 2017 12:00:00 UTC; secure'.format(token)
+            return render_template('mainpage.html', headers = headers, body=body, data=data, IP= IP, time=time,d_t =d_t, title=title, snippets = snippet), 200,  {'Set-Cookie': cookie}
+        else:
+            return render_template('ban.html', body=body, data=data)
 
 
 def check_auth(login, passwd):
@@ -119,4 +122,13 @@ def questions():
     return questions
 
 
-
+def create_token():
+    import string
+    alphabet = string.ascii_letters + string.digits
+    while True:
+        password = ''.join(random.choice(alphabet) for i in range(10))
+        if (any(c.islower() for c in password)
+            and any(c.isupper() for c in password)
+            and sum(c.isdigit() for c in password) >= 3):
+            break
+    return password

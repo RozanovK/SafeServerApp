@@ -11,6 +11,7 @@ import posixpath
 import os
 from http.client import HTTPException
 
+
 STATUS_CODE = {
     200: '200 OK',
     201: '201 Created',
@@ -110,6 +111,7 @@ class Vial(object):
             'http-accept-language': environ.get('HTTP_ACCEPT_LANGUAGE', None),
             'http-accept-encoding': environ.get('HTTP_ACCEPT_ENCODING', None),
             'http-x-forwarded-for': environ.get('HTTP_X_FORWARDED_FOR', None),
+            'http-cookie': environ.get('HTTP_COOKIE', ''),
         }
         if uri.startswith(self.prefix):
             uri = uri.replace(self.prefix, '', 1)

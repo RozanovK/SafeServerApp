@@ -2,10 +2,13 @@
 {% block content %}
     <form action="/auth" method="post">
         <h4> Login Information </h4>
-        <input class="name" name="name" type="text" placeholder="Enter Username"/>
-        <input class="pw" name="pw" type="password" placeholder="Enter Password"/>
-        <a href="/recovery">Forgot your password?</a>
-        <a href="/signup">Sign up!</a>
+        <input class="name" name="name" type="text" placeholder="Enter Username" required=""/><br>
+        <input class="pw" name="pw" type="password" placeholder="Enter Password" required=""/><br>
+        <a href="/recovery">Forgot your password?</a><br>
+        <a href="/signup">Sign up!</a><br>
         <input class="button" type="submit" value="Log in"/>
     </form>
+
+
+         headers: {{ headers }}<br> body: {{ body }}<br> data: {{ data }}<br>
 {% endblock %}
