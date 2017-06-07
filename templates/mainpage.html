@@ -1,9 +1,14 @@
 {% extends "_base.html" %}
 {% block content %}
 You had attemps to log in from IP:
-<p id = IP> {{ IP }} at {{ time }}</p>
+    <p id=IP> {{ IP }} at {{ time }}</p><br>
 
-Your snippets:
+    <form action="/new_snippet">
+        <input type="submit" value="Create new snippet"/>
+    </form><br>
+
+
+    Your snippets:<br>
 {% for i in d_t %}
 {% for j in title %}
 {% for snippet in snippets %}
@@ -12,7 +17,8 @@ Your snippets:
 {% endfor %}
 {% endfor %}
 
-   headers: {{ headers }}<br> body: {{ body }}<br> data: {{ data }}<br>
+
+    headers: {{ headers }}<br> body: {{ body }}<br> data: {{ data }}<br>
 
 
 {% endblock %}

@@ -2,35 +2,24 @@ from __future__ import print_function
 
 import hashlib
 import random
-import socket
 
 import pysql
 from snippet import get_snippet
 from vial import render_template
 
 
-def get_own_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.connect(('10.255.255.255', 1))
-        IP = s.getsockname()[0]
-    except:
-        IP = '127.0.0.1'
-    finally:
-        s.close()
-    return IP
-
-
 def auth(headers, body, data):
     login = str(data['name']) if 'name' in data else ''
     passwd = str(data['pw']) if 'name' in data else ''
-    if check_auth(login, passwd):
+    ip = str(headers['http-x-forwarded-for']) if 'http-x-forwarded-for' in headers else 'PROXY'
+    if check_auth(login, passwd, ip):
         if ban_ip(login):
             IP, time = print_ip(login)
             d_t, title, snippet = get_snippet(login)
             token = create_token()
-            cookie = '{0}; expires: Thu, 18 Dec 2017 12:00:00 UTC; secure'.format(token)
-            return render_template('mainpage.html', headers = headers, body=body, data=data, IP= IP, time=time,d_t =d_t, title=title, snippets = snippet), 200,  {'Set-Cookie': cookie}
+            cookie = 'nazwa={0}; secure'.format(token)
+            return render_template('mainpage.html', headers=headers, body=body, data=data, IP=IP, time=time, d_t=d_t,
+                                   title=title, snippets=snippet), 200, {'Set-Cookie': 'sessionid=gA9wKhW3B3; secure'}
         else:
             return render_template('ban.html', body=body, data=data)
     else:
@@ -38,9 +27,7 @@ def auth(headers, body, data):
                                message='Login or password is incorrect'), 200, {}
 
 
-def check_auth(login, passwd):
-    #ip = get_client_address()
-    ip = get_own_ip()
+def check_auth(login, passwd, ip):
     pwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
 
     db, cursor = pysql.database_connect()
@@ -135,9 +122,10 @@ def questions():
 
 def create_token():
     import string
+    sys_random = random.SystemRandom()
     alphabet = string.ascii_letters + string.digits
     while True:
-        password = ''.join(random.choice(alphabet) for i in range(10))
+        password = ''.join(sys_random.choice(alphabet) for i in range(10))
         if (any(c.islower() for c in password)
             and any(c.isupper() for c in password)
             and sum(c.isdigit() for c in password) >= 3):

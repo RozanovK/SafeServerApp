@@ -1,0 +1,9 @@
+{% extends "_base.html" %}
+{% block content %}
+    <input class="name" name="name" type="text" placeholder="Print title..." required=""/><br>
+    <textarea rows="15" cols="100"> </textarea><br>
+    <form action="/put_snippet">
+        <input type="submit" value="Create new snippet"/>
+    </form><br>
+
+{% endblock %}

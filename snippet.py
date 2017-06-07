@@ -1,4 +1,5 @@
 from pysql import database_connect, datetime_mysql
+from vial import render_template
 
 
 def put_snippet(headers, body, data, login):
@@ -9,6 +10,8 @@ def put_snippet(headers, body, data, login):
     cursor.execute('''INSERT INTO snippets(login, datetime, title, snippet) VALUES(%s, %s, %s)''' , (login, time, title, snippet))
     db.commit()
     db.close()
+    return render_template()
+
 
 
 def get_snippet(login):

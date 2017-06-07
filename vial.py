@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-from io import BytesIO
+import posixpath
 from cgi import FieldStorage
+from http.client import HTTPException
+from io import BytesIO
+from mimetypes import guess_type
+from os.path import isfile
+
 import parse
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
-from jinja2 import Template
-from os.path import isfile
-from mimetypes import guess_type
-import posixpath
-import os
-from http.client import HTTPException
-
 
 STATUS_CODE = {
     200: '200 OK',
@@ -107,11 +105,11 @@ class Vial(object):
             'remote-addr': environ.get('REMOTE_ADDR', None),
             'request-uri': environ.get('REQUEST_URI', None),
             'http-accept': environ.get('HTTP_ACCEPT', None),
+            'http-cookie': environ.get('HTTP_COOKIE', ''),
             'http-host': environ.get('HTTP_HOST', None),
             'http-accept-language': environ.get('HTTP_ACCEPT_LANGUAGE', None),
             'http-accept-encoding': environ.get('HTTP_ACCEPT_ENCODING', None),
             'http-x-forwarded-for': environ.get('HTTP_X_FORWARDED_FOR', None),
-            'http-cookie': environ.get('HTTP_COOKIE', ''),
         }
         if uri.startswith(self.prefix):
             uri = uri.replace(self.prefix, '', 1)
@@ -151,12 +149,6 @@ class Vial(object):
                data[name] = FormTextField(field.value)
 
         return data
-
-    def get_client_address(environ):
-        try:
-            return environ['HTTP_X_FORWARDED_FOR'].split(',')[-1].strip()
-        except KeyError:
-            return environ['REMOTE_ADDR']
 
     def wsgi_app(self):
         def app(environ, start_response):

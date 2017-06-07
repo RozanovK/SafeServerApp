@@ -1,7 +1,7 @@
 # SafeServerApp
 
 ## **Description**
-This is small server application written in Python3.5. Basic functionality: authentication, ability to create new user, password recovery based on secret answer
+This is small server application based on pikoframework [Vial](https://goope.ee.pw.edu.pl/bach/vial) written in Python3.5. Basic functionality: authentication, ability to create new user, password recovery based on secret answer
 
 ## **Requirments**
 * Python 3.6
