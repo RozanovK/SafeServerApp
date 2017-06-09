@@ -1,22 +1,25 @@
 {% extends "_base.html" %}
 {% block content %}
+
+    {{ message }}
 <form action="/signup_db" method="post">
+
     <h4>Sign up Form</h4>
-    <input placeholder="Login" class="name" name="name" type="text" required=""><br>
-    <input  placeholder="Password" class="pw" name="pw" type="password" required=""><br>
-    <input  placeholder="Confirm Password" class="pw" name="pw" type="password" required=""><br>
+    <input placeholder="Login" class="name" name="name" type="text" required=""/><br>
     <select>
 
         {% for question in questions %}
-            <option>{{ question[0] }}</option>
+            <option name="{{ [0] }}">{{ question[0] }}</option>
         {% endfor %}
 
     </select><br>
-    <input name="answer", type="text" placeholder="Enter Answer"  required=""/><br>
-    <input class="button" type="submit" value="sign up">
+    <input name="answer" type="text" placeholder="Enter Answer" required=""/><br>
+    <input placeholder="Password" class="pw" name="pw" type="password" required=""/><br>
+    <input placeholder="Confirm Password" class="pw" name="pwconf" type="password" required=""/><br>
+    <input class="button" type="submit" value="sign up"/>
 </form>
 
-        {{ headers }} {{ body }} {{ data }}
+    headers: {{ headers }}<br> body: {{ body }}<br> data: {{ data }}<br>
 
 {% endblock %}
 

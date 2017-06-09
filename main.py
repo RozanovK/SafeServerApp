@@ -12,6 +12,7 @@ def recovery(headers, body, data):
     question_tuple = questions()
     return render_template('recovery.html', headers=headers, body=body, data=data, questions=question_tuple), 200, {}
 
+
 def signup(headers, body, data):
     question_tuple = questions()
     return render_template('signup.html', headers=headers, body=body, data=data, questions=question_tuple), 200, {}
