@@ -1,6 +1,9 @@
 import hashlib
 import uuid
 
+import passwordmeter
+
+from auth import questions
 from pysql import database_connect
 from vial import render_template
 
@@ -14,11 +17,19 @@ def signup_db(headers, body, data):
 
     cursor.execute('SELECT * FROM users WHERE login=%s', (login))
     if (cursor.fetchone()) is not None:
-        return render_template('signup.html', body=body, data=data,
+        questions_tuple = questions()
+        return render_template('signup.html', body=body, data=data, questions=questions_tuple,
                                message='This login is already in use, please choose another one!'), 200, {}
     if not (password == password_conf):
-        return render_template('signup.html', body=body, data=data,
+        questions_tuple = questions()
+        return render_template('signup.html', body=body, data=data, questions=questions_tuple,
                                message='Passwords are not match!'), 200, {}
+    strength, improvements = passwordmeter.test(password)
+
+    if strength < 0.3:
+        questions_tuple = questions()
+        return render_template('signup.html', body=body, data=data, questions=questions_tuple,
+                               message='Your password is too weak!'), 200, {}
     salt = uuid.uuid4().hex
     salt_bytes = salt.encode('utf-8')
 
