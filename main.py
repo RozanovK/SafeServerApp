@@ -1,4 +1,6 @@
-from auth import auth, forgot_password, insert_new_password, questions
+from auth import auth
+from forgot_password import forgot_password, insert_new_password
+from pysql import questions
 from signup import signup_db
 from snippet import put_snippet
 from vial import render_template, Vial

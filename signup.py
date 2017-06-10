@@ -3,8 +3,7 @@ import uuid
 
 import passwordmeter
 
-from auth import questions
-from pysql import database_connect
+from pysql import database_connect, questions
 from vial import render_template
 
 
