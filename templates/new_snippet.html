@@ -1,11 +1,11 @@
 {% extends "_base.html" %}
 {% block content %}
     {{ message }}
-    <form action="/put_snippet">
+    <form action="/put_snippet" method="post">
         <h4>Snippet Creator!</h4>
-        <input class="name" name="title" type="text" placeholder="Print title..." required=""/><br>
+        <input name="title" type="text" placeholder="Print title..." required=""/><br>
         <textarea name="snippet" rows="15" cols="100" required=""> </textarea><br>
-        <input class="button" type="submit" value="Create new snippet"/>
+        <input type="submit" value="Create new snippet"/>
     </form>
 
     headers: {{ headers }}<br> body: {{ body }}<br> data: {{ data }}<br>

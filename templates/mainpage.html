@@ -8,11 +8,11 @@ You had attemps to log in from IP:
     </form><br>
 
 
-    Your snippets:<br>
+    All snippets:<br>
 {% for i in d_t %}
 {% for j in title %}
 {% for snippet in snippets %}
-     {{ i, j, snippet }}<br>
+    {{ i, j, snippet|e }}<br>
 {% endfor %}
 {% endfor %}
 {% endfor %}

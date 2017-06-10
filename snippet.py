@@ -47,3 +47,18 @@ def redirect_main(headers, body, data, login):
     d_t, title, snippet = get_snippet(login)
     return render_template('mainpage.html', headers=headers, body=body, data=data, IP=IP, time=time, d_t=d_t,
                            title=title, snippets=snippet), 200, {}
+
+
+def get_all_snipets():
+    db, cursor = pysql.database_connect()
+    cursor.execute('SELECT COUNT(*) FROM snippets')
+    number = int(cursor.fetchone()[0])
+    d_t = [number]
+    title = [number]
+    snippet = [number]
+    cursor.execute('SELECT datetime, title, snippet FROM snippets')
+    snippets = cursor.fetchall()
+    for i in snippets:
+        d_t[0], title[0], snippet[0] = i
+    db.close()
+    return d_t, title, snippet

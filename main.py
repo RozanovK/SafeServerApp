@@ -2,12 +2,14 @@ from auth import auth
 from forgot_password import forgot_password, insert_new_password
 from pysql import questions
 from signup import signup_db
-from snippet import put_snippet
+from snippet import put_snippet, get_all_snipets
 from vial import render_template, Vial
 
 
 def index(headers, body, data):
-    return render_template('index.html', headers=headers, body=body, data=data), 200, {}
+    d_t, title, snippet = get_all_snipets()
+    return render_template('index.html', headers=headers, body=body, data=data, d_t=d_t,
+                           title=title, snippets=snippet), 200, {}
 
 
 def recovery(headers, body, data):
