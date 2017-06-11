@@ -13,4 +13,4 @@ In order to run execute:
 ```
 uwsgi --ini drink.ini
 ```
-App will be available at localhost:9090
+App will be available at localhost:9090. This method is inefficient, because some main features nead cookie in order to run. Better solution is to run application on web-server (nginx or apache) with reverse proxy and set your own domain in Cookie class.
