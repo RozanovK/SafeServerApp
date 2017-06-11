@@ -1,9 +1,11 @@
 import hashlib
+import os
 import uuid
 
 import passwordmeter
 
 from pysql import database_connect, questions
+from snippet import get_all_snipets
 from vial import render_template
 
 
@@ -15,20 +17,25 @@ def signup_db(headers, body, data):
     answer = str(data['answer']) if 'answer' in data else ''
 
     cursor.execute('SELECT * FROM users WHERE login=%s', (login))
+    questions_tuple = questions()
     if (cursor.fetchone()) is not None:
-        questions_tuple = questions()
         return render_template('signup.html', body=body, data=data, questions=questions_tuple,
                                message='This login is already in use, please choose another one!'), 200, {}
+    if not check_login_char(login):
+        return render_template('signup.html', body=body, data=data, questions=questions_tuple,
+                               message='Login can only contains lowarcase letters and digits!'), 200, {}
+    if not check_login_length(login):
+        return render_template('signup.html', body=body, data=data, questions=questions_tuple,
+                               message='Login is too long!'), 200, {}
     if not (password == password_conf):
-        questions_tuple = questions()
         return render_template('signup.html', body=body, data=data, questions=questions_tuple,
                                message='Passwords are not match!'), 200, {}
     strength, improvements = passwordmeter.test(password)
 
     if strength < 0.3:
-        questions_tuple = questions()
         return render_template('signup.html', body=body, data=data, questions=questions_tuple,
                                message='Your password is too weak!'), 200, {}
+    create_user_folder(login)
     salt = uuid.uuid4().hex
     salt_bytes = salt.encode('utf-8')
 
@@ -41,4 +48,24 @@ def signup_db(headers, body, data):
                    (login, password, salt, answer))
     db.commit()
     db.close()
-    return render_template('index.html', body=body, data=data, message='You successfully registered new user!'), 200, {}
+    d_t, title, snippets = get_all_snipets()
+    return render_template('index.html', body=body, data=data, d_t=d_t, title=title, snippets=snippets,
+                           message='You successfully registered new user!'), 200, {}
+
+
+def check_login_char(login):
+    for i in login:
+        if not i.islower() or i.isdigit():
+            return False
+    return True
+
+
+def check_login_length(login):
+    if len(login) > 20:
+        return False
+    return True
+
+
+def create_user_folder(login):
+    currDir = os.path.dirname(os.path.abspath(__file__))
+    os.makedirs(currDir + "/../serwer/usr/" + login)

@@ -1,7 +1,9 @@
 {% extends "_base.html" %}
 {% block content %}
- Pola formularza:
- {% for name in data %} {{ name }} -- {{ data[name] }} {% endfor %}
+    <form action="/upload_file" method="post" enctype="multipart/form-data">
+        Select file to upload:
+        <input type="file" name="upload">
+        <input type="submit" value="Upload File" name="submit">
+    </form>
 
- Ciało: {{ body }}
 {% endblock %}

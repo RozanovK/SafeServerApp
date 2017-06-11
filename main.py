@@ -3,6 +3,7 @@ from forgot_password import forgot_password, insert_new_password
 from pysql import questions
 from signup import signup_db
 from snippet import put_snippet, get_all_snipets
+from upload import upload_file
 from vial import render_template, Vial
 
 
@@ -26,6 +27,9 @@ def new_snippet(headers, body, data):
     return render_template('new_snippet.html', headers=headers, body=body, data=data), 200, {}
 
 
+def upload(headers, body, data):
+    return render_template('upload.html', body=body, data=data), 200, {}
+
 routes = {
     '/': index,
     '/auth': auth,
@@ -35,7 +39,9 @@ routes = {
     '/signup': signup,
     '/signup_db': signup_db,
     '/new_snippet': new_snippet,
-    '/put_snippet': put_snippet
+    '/put_snippet': put_snippet,
+    '/upload': upload,
+    '/upload_file': upload_file,
 }
 
 app = Vial(routes, prefix='', static='/static').wsgi_app()

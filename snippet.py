@@ -1,3 +1,5 @@
+from unidecode import unidecode
+
 import pysql
 from cookie import AuthCookieFactory
 from vial import render_template
@@ -8,6 +10,10 @@ def put_snippet(headers, body, data):
     time = pysql.datetime_mysql()
     snippet = str(data['snippet']) if 'snippet' in data else ''
     title = str(data['title']) if 'title' in data else ''
+    snippet = unidecode(snippet)  # decode non-standard letters
+    if not check_title():
+        return render_template('new_snippet.html', headers=headers, body=body, data=data,
+                               message='Title can only contain letters or digits!'), 200, {}
     if len(title) > 40:
         return render_template('new_snippet.html', headers=headers, body=body, data=data,
                                message='Title is too long!'), 200, {}
@@ -62,3 +68,12 @@ def get_all_snipets():
         d_t[0], title[0], snippet[0] = i
     db.close()
     return d_t, title, snippet
+
+
+def check_title(title):
+    title = title.split()
+    for word in title:
+        for i in word:
+            if not i.isalpha() or i.isdigit():
+                return False
+    return True
