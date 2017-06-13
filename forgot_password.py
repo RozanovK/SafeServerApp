@@ -1,9 +1,11 @@
 import hashlib
-import passwordmeter
 import uuid
+
+import passwordmeter
 
 import pysql
 from pysql import questions
+from snippet import get_all_snipets
 from vial import render_template
 
 
@@ -47,7 +49,7 @@ def insert_new_password(headers, body, data):
     if passwd == passwd_r:
         strength, improvements = passwordmeter.test(passwd)
         if strength < 0.3:
-            return render_template('passwordchange.html', body=body, data=data,
+            return render_template('passwordchange.html', body=body, data=data, login=login,
                                    message='Your password is too weak!'), 200, {}
         for i in range(3):
             pw_bytes = passwd.encode('utf-8')
@@ -56,8 +58,9 @@ def insert_new_password(headers, body, data):
         cursor.execute('''UPDATE users SET password= %s, salt= %s WHERE login= %s''', (passwd, salt, login))
         db.commit()
         db.close()
-        return render_template('index.html', body=body, data=data,
+        snippets = get_all_snipets()
+        return render_template('index.html', body=body, data=data, snippets=snippets,
                                message='You successfully changed your password!'), 200, {}
     else:
-        return render_template('passwordchange.html', body=body, data=data,
+        return render_template('passwordchange.html', body=body, data=data, login=login,
                                message='Passwords are not match!'), 200, {}

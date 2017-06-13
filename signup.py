@@ -23,7 +23,7 @@ def signup_db(headers, body, data):
                                message='This login is already in use, please choose another one!'), 200, {}
     if not check_login_char(login):
         return render_template('signup.html', body=body, data=data, questions=questions_tuple,
-                               message='Login can only contains lowarcase letters and digits!'), 200, {}
+                               message='Login can only contains lowarcase letters!'), 200, {}
     if not check_login_length(login):
         return render_template('signup.html', body=body, data=data, questions=questions_tuple,
                                message='Login is too long!'), 200, {}
@@ -48,14 +48,14 @@ def signup_db(headers, body, data):
                    (login, password, salt, answer))
     db.commit()
     db.close()
-    d_t, title, snippets = get_all_snipets()
-    return render_template('index.html', body=body, data=data, d_t=d_t, title=title, snippets=snippets,
+    snippets = get_all_snipets()
+    return render_template('index.html', body=body, data=data, snippets=snippets,
                            message='You successfully registered new user!'), 200, {}
 
 
 def check_login_char(login):
     for i in login:
-        if not i.islower() or i.isdigit():
+        if not i.islower():
             return False
     return True
 

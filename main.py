@@ -1,4 +1,5 @@
 from auth import auth
+from change_password import insert_new_passwd, change_password_form
 from forgot_password import forgot_password, insert_new_password
 from pysql import questions
 from signup import signup_db
@@ -8,9 +9,8 @@ from vial import render_template, Vial
 
 
 def index(headers, body, data):
-    d_t, title, snippet = get_all_snipets()
-    return render_template('index.html', headers=headers, body=body, data=data, d_t=d_t,
-                           title=title, snippets=snippet), 200, {}
+    snippets = get_all_snipets()
+    return render_template('index.html', headers=headers, body=body, snippets=snippets), 200, {}
 
 
 def recovery(headers, body, data):
@@ -42,6 +42,8 @@ routes = {
     '/put_snippet': put_snippet,
     '/upload': upload,
     '/upload_file': upload_file,
+    '/password_change_form': change_password_form,
+    '/password_change': insert_new_passwd
 }
 
 app = Vial(routes, prefix='', static='/static').wsgi_app()

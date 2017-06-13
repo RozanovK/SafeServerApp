@@ -4,7 +4,7 @@ import hashlib
 
 import pysql
 from cookie import AuthCookieFactory
-from snippet import get_snippet, get_all_snipets
+from snippet import get_all_snipets
 from vial import render_template
 
 
@@ -14,24 +14,22 @@ def auth(headers, body, data):
     # ip = str(headers['http-x-forwarded-for']) if 'http-x-forwarded-for' in headers else 'PROXY'
     ip = str(headers['remote-addr'])
     if check_auth(login, passwd, ip):
-        if ban_ip(ip):
+        if ban_ip(login):
             IP, time = pysql.print_ip(login)
-            d_t, title, snippet = get_snippet(login)
             db, cursor = pysql.database_connect()
             cookie = (AuthCookieFactory()).generate()
             cursor.execute('INSERT INTO cookie(login, token) VALUES(%s, %s)', (login, cookie.get_token()))
             db.commit()
             db.close()
-            return render_template('mainpage.html', headers=headers, body=body, data=data, IP=IP, time=time, d_t=d_t,
-                                   title=title, snippets=snippet), 200, {'Set-Cookie': cookie.return_cookie()}
+            return render_template('mainpage.html', headers=headers, body=body, data=data, IP=IP, time=time), 200, {
+                'Set-Cookie': cookie.return_cookie()}
         else:
-            d_t, title, snippets = get_all_snipets()
-            return render_template('index.html', body=body, data=data, d_t=d_t, title=title, snippets=snippets,
+            snippets = get_all_snipets()
+            return render_template('index.html', body=body, data=data, snippets=snippets,
                                    message='Too many wrong attemts to log in! You\'ve banned!')
     else:
-        d_t, title, snippets = get_all_snipets()
-        return render_template('index.html', headers=headers, body=body, data=data, d_t=d_t, title=title,
-                               snippets=snippets,
+        snippets = get_all_snipets()
+        return render_template('index.html', headers=headers, body=body, data=data, snippets=snippets,
                                message='Login or password is incorrect'), 200, {}
 
 
@@ -58,11 +56,11 @@ def check_auth(login, password, ip):
          return False
 
 
-def ban_ip(IP):
+def ban_ip(login):
     db,cursor = pysql.database_connect()
     cursor.execute(
         '''SELECT COUNT(*) FROM logs WHERE validation="N" AND login = %s AND (TIMESTAMPDIFF(HOUR, time, Now()) < 1)''',
-        IP)  # sprawdzamy ilość niepoprawnych walidacji w ciągu ostatniej godziny
+        login)  # sprawdzamy ilość niepoprawnych walidacji w ciągu ostatniej godziny
     num = int(str(cursor.fetchone()[0]))
     if num < 5:
         return True

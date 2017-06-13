@@ -1,5 +1,7 @@
 {% extends "_base.html" %}
 {% block content %}
+
+    {{ message }}
 You had attemps to log in from IP:
     <p id=IP> {{ IP }} at {{ time }}</p><br>
 
@@ -8,19 +10,6 @@ You had attemps to log in from IP:
     </form><br>
 
     <a href="/upload">Upload private file!</a><br>
-
-
-    All snippets:<br>
-{% for i in d_t %}
-{% for j in title %}
-{% for snippet in snippets %}
-    {{ i, j, snippet|e }}<br>
-{% endfor %}
-{% endfor %}
-{% endfor %}
-
-
-    headers: {{ headers }}<br> body: {{ body }}<br> data: {{ data }}<br>
-
+    <a href="/password_change_form">Change password</a><br>
 
 {% endblock %}

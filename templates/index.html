@@ -10,14 +10,13 @@
         <input class="button" type="submit" value="Log in"/>
     </form><br>
 
-    All snippets:<br>
-    {% for i in d_t %}
-        {% for j in title %}
-            {% for snippet in snippets %}
-                {{ i, j, snippet|e }}<br>
-            {% endfor %}
+    <h1>All snippets:</h1>
+    <div style="background-color:black;color:white;padding:20px;">
+        {% for j in snippets %}
+            <h2> {{ j[1] }}</h2>
+            <p>{{ j[2]|e }}</p>
         {% endfor %}
-    {% endfor %}
+    </div>
 
 
 {% endblock %}
